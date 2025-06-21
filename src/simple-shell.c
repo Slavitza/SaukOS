@@ -459,7 +459,7 @@ int simple_shell_sauko(char **args) {
     char *app_path = NULL;
 
     if (strcmp(app_name, "tetris") == 0) {
-        app_path = "/home/arelyxl/Downloads/Repos/SaukOS/Tetris/tetris.sh";  // Cambiar por tu ruta real
+        app_path = "Tetris/tetris.sh";  // Cambiar por tu ruta real
     } 
     else {
         fprintf(stderr, "Aplicación no reconocida: %s\n", app_name);
