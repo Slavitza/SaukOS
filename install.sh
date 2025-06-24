@@ -28,6 +28,7 @@ else
 fi
 
 echo "Instalación completada."
-echo "Abre una nueva terminal o ejecuta: source $PROFILE_FILE"
-echo "Luego podrás usar: SaukOS o sauko tetris desde cualquier lugar"
+echo "Iniciando SaukOS . . . "
+
+"$INSTALL_DIR/SaukOS"
 
