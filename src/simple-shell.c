@@ -399,6 +399,7 @@ int simple_shell_cd(char **args);
 int simple_shell_help(char **args);
 int simple_shell_exit(char **args);
 int simple_shell_sauko(char **args);
+int simple_shell_saukobot(char **args);
 void exec_command(char **args, char **redir_argv, int wait, int res);
 
 // List of builtin commands
@@ -406,7 +407,8 @@ char *builtin_str[] = {
     "cd",
     "help",
     "exit",
-    "sauko"
+    "sauko",
+    "saukobot"
 };
 
 // Corresponding functions.
@@ -414,7 +416,8 @@ int (*builtin_func[])(char **) = {
     &simple_shell_cd,
     &simple_shell_help,
     &simple_shell_exit,
-    &simple_shell_sauko
+    &simple_shell_sauko,
+    &simple_shell_saukobot
 };
 
 int simple_shell_num_builtins() {
@@ -489,6 +492,17 @@ int simple_shell_sauko(char **args) {
     }
     return 1;
 }
+
+
+/**
+* Función para ejecutar aplicaciones bajo el comando sauko
+ * @param args: [saukobot, prompt, ...]
+ * @return 1 si se ejecutó correctamente
+ */
+int simple_shell_sauko(char **args) {
+
+}
+
 
 //-----------------------------------------------------------------------------------------
 
@@ -652,25 +666,24 @@ void exec_command(char **args, char **redir_argv, int wait, int res) {
  * @return 0 nếu hết chương trình
  */
 int main(void) {
-    // Mảng chưa các agrs
     char *args[BUFFER_SIZE];
 
-    // Chuỗi line
+
     char line[MAX_LINE_LENGTH];
 
-    // Chuỗi sao chép từ line
+
     char t_line[MAX_LINE_LENGTH];
 
-    // Chuỗi lưu trữ lịch sử
+
     char history[MAX_LINE_LENGTH] = "No commands in history";
 
-    // Mảng chứa agrs để thực tthi chuyển hướng IO
+
     char *redir_argv[REDIR_SIZE];
 
-    // Check xem có chạy nền không
+
     int wait;
 
-    // Khởi tạo banner shell
+
     init_shell();
     int res = 0;
 
@@ -678,16 +691,16 @@ int main(void) {
         printf("%s:%s> ", prompt(), get_current_dir());
         fflush(stdout);
 
-        // Đọc chuuỗi nhận vào từ người dùng
+
         read_line(line);
 
-        // Sao chép chuỗi
+
         strcpy(t_line, line);
 
-        // Parser chuỗi input
+
         parse_command(line, args, &wait);
 
-        // Thực thi lệnh
+
         if (strcmp(args[0], "!!") == 0) {
             res = simple_shell_history(history, redir_argv);
         } else {
