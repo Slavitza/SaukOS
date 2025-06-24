@@ -36,7 +36,6 @@ int running = 1;
 
 
 /**
- * Hàm khởi tạo banner cho shell
  * @param None
  * @return None
  */
@@ -59,7 +58,6 @@ char *get_current_dir() {
 }
 
 /**
- * Hàm khởi tạo Shell Prompt có dạng YYYY-MM-dd <space> hour:minute:second <space> default name of shell <space> >
  * @param None
  * @return a prompt string
  */
@@ -77,34 +75,34 @@ char *prompt() {
         }
     }
 
-    // Lấy ngày tháng năm
+    
     now = time(NULL);
     if (now == -1) {
         fprintf(stderr, "Error: Cannot get current timestamp");
         exit(EXIT_FAILURE);
     }
 
-    // Lấy giờ hệ thống
+    
     tmp = localtime(&now);
     if (tmp == NULL) {
         fprintf(stderr, "Error: Cannot identify timestamp");
         exit(EXIT_FAILURE);
     }
 
-    // Tạo chuỗi theo format YYYY-MM-dd <space> hour:minute:second <space>
+    
     size = strftime(_prompt, PROMPT_MAX_LENGTH, PROMPT_FORMAT, tmp);
     if (size == 0) {
         fprintf(stderr, "Error: Cannot convert time to string");
         exit(EXIT_FAILURE);
     }
-    // Thêm vào sau tên mặc định của shell
+    
     char* username = getenv("USER");
     strncat(_prompt, username, strlen(username));
     return _prompt;
 }
 
 /**
- * Hàm báo lỗi
+ 
  * @param None
  * @return None
  */
@@ -241,8 +239,8 @@ void parse_pipe(char **argv, char **child01_argv, char **child02_argv, int pipe_
 // Execution
 
 /**
- * @description: Hàm thực hiện lệnh child
- * @param argv mảng chuỗi chứa những chuỗi arg để truyền vào execvp (int execvp(const char *file, char *const argv[]);)
+ * @description: 
+ * @param argv 
  * @return none
  */
 void exec_child(char **argv) {
@@ -253,8 +251,8 @@ void exec_child(char **argv) {
 }
 
 /**
- * @description Hàm thực hiện chuyển hướng đầu vào <
- * @param argv mảng chuỗi chứa những chuỗi arg, dir mảng chuỗi chứa những chuỗi con chứa các args đã parse bằng parse_redirect
+ * @description 
+ * @param argv 
  * @return none
  */
 void exec_child_overwrite_from_file(char **argv, char **dir) {
@@ -275,8 +273,8 @@ void exec_child_overwrite_from_file(char **argv, char **dir) {
 }
 
 /**
- * @description Hàm thực hiện chuyển hướng đầu ra >
- * @param argv mảng chuỗi chứa những chuỗi arg, dir mảng chuỗi chứa những chuỗi con chứa các args đã parse bằng parse_redirect
+ * @description 
+ * @param argv 
  * @return none
  */
 void exec_child_overwrite_to_file(char **argv, char **dir) {
@@ -298,8 +296,8 @@ void exec_child_overwrite_to_file(char **argv, char **dir) {
 }
 
 /**
- * @description Hàm thực hiện chuyển hướng đầu ra >> (Append) nhưng mà đang lỗi, có lẽ tụi em sẽ update sau
- * @param argv mảng chuỗi chứa những chuỗi arg, dir mảng chuỗi chứa những chuỗi con chứa các args đã parse bằng parse_redirect
+ * @description 
+ * @param argv 
  * @return none
  */
 void exec_child_append_to_file(char **argv, char **dir) {
@@ -423,7 +421,7 @@ int simple_shell_num_builtins() {
 // Implement - Cài đặt
 
 /**
- * @description Hàm cd (change directory) bằng cách gọi hàm chdir()
+ * @description cd (change directory) 
  * @param argv mảng chuỗi chứa những chuỗi arg để thực hiện lệnh
  * @return 0 nếu thất bại, 1 nếu thành công
  */
@@ -491,18 +489,21 @@ int simple_shell_sauko(char **args) {
  */ 
 int simple_shell_help(char **argv) {
     static char help_team_information[] =
-        "OPERATING SYSTEMS PROJECT 01 - A SIMPLE SHELL\n"
+        "OPERATING SYSTEMS PROJECT - SaukOS\n"
         "λ Team member λ\n"
-        "18120061 \t\tNhut-Nam Le\n"
-        "18120185 \t\tDang-Khoa Doan\n"
-        "λ Description λ\n"
-        "Khoa and Nam's Shell is a simple UNIX command interpreter that replicates functionalities of the simple shell (sh).\n"
-        "This program was written entirely in C as assignment for project 01 in Operating Systems Course CQ2018-21, host by lecturers Dung Tran Trung & lab teacher Le Giang Thanh."
+        "2023241041 \t\tAndry Caceres\n"
+        "2023803802 \t\tSlavitza Zvietcovich\n"
+        "λ Descripción λ\n"
+        "El shell SaukOS propuesto desarrolado por Slavitza es parte del proyecto final de Sistemas Operativos.\n"
+        "This program was written entirely in C as assignment"
         "\n"
         "\nUsage help command. Type help [command name] for help/ more information.\n"
         "Options for [command name]:\n"
         "cd <directory name>\t\t\tDescription: Change the current working directory.\n"
-        "exit              \t\t\tDescription: Exit Khoa & Nam'shell, buyback Linux Shell.\n";
+        "sauko <application name> [args]\tDescription: Run a SaukOS application.\n"
+        "help <command name> \t\t\tDescription: Show help information for a specific command.\n"
+
+        "exit              \t\t\tDescription: Exit to SaukOS.\n";
     static char help_cd_command[] = "HELP CD COMMAND\n";
     static char help_exit_command[] = "HELP EXIT COMMAND\n";
 
@@ -637,7 +638,6 @@ void exec_command(char **args, char **redir_argv, int wait, int res) {
 }
 
 /**
- * @description Hàm main :))
  * @param void không có gì
  * @return 0 nếu hết chương trình
  */
