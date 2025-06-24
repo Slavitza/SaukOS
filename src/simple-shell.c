@@ -9,6 +9,9 @@
 #include <fcntl.h> // open(), creat(), close()
 #include <time.h>
 #include <errno.h>
+#include <limits.h> // FILENAME_MAX
+#include <libgen.h> 
+#include <linux/limits.h>
 // ######################################################################################
 
 // ############################## DEFINE SECTION ########################################
@@ -418,12 +421,11 @@ int simple_shell_num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
 }
 
-// Implement - Cài đặt
 
 /**
  * @description cd (change directory) 
- * @param argv mảng chuỗi chứa những chuỗi arg để thực hiện lệnh
- * @return 0 nếu thất bại, 1 nếu thành công
+ * @param argv 
+ * @return 0 
  */
 int simple_shell_cd(char **argv) {
     if (argv[1] == NULL) {
@@ -449,14 +451,23 @@ int simple_shell_sauko(char **args) {
         return 1;
     }
 
-    // Mapeo de aplicaciones
     char *app_name = args[1];
-    char *app_path = NULL;
+    char app_path[PATH_MAX];
 
     if (strcmp(app_name, "tetris") == 0) {
-        app_path = "Tetris/tetris.sh";  // Cambiar por tu ruta real
-    } 
-    else {
+        // Obtener la ruta absoluta del ejecutable actual
+        char exe_path[PATH_MAX];
+        ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path)-1);
+        if (len == -1) {
+            perror("No se pudo obtener la ruta del ejecutable");
+            return 1;
+        }
+        exe_path[len] = '\0';
+        // Obtener el directorio donde está el ejecutable (src)
+        char *dir = dirname(exe_path);
+        // Construir la ruta absoluta al script tetris.sh
+        snprintf(app_path, sizeof(app_path), "%s/Tetris/tetris.sh", dir);
+    } else {
         fprintf(stderr, "Aplicación no reconocida: %s\n", app_name);
         return 1;
     }
@@ -464,22 +475,21 @@ int simple_shell_sauko(char **args) {
     // Ejecutar la aplicación
     pid_t pid = fork();
     if (pid == 0) {
-        // Proceso hijo
-        if (execv(app_path, &args[1]) == -1) {
+        // Proceso hijo: ejecuta el script con los argumentos (empezando desde app_path)
+        char *argv_exec[] = {app_path, NULL};
+        if (execv(app_path, argv_exec) == -1) {
             perror("sauko");
         }
         exit(EXIT_FAILURE);
-    } 
-    else if (pid > 0) {
-        // Proceso padre
+    } else if (pid > 0) {
         int status;
         waitpid(pid, &status, 0);
-    } 
-    else {
+    } else {
         perror("Error en fork");
     }
     return 1;
 }
+
 //-----------------------------------------------------------------------------------------
 
 /**
