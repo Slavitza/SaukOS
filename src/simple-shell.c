@@ -34,7 +34,7 @@
 
 // ############################## GLOBAL VARIABLES SECTION ##############################
 int running = 1;
-
+char API_KEY[] = ""; // Perplexity API key
 // ######################################################################################
 
 
@@ -504,8 +504,9 @@ int simple_shell_saukobot(char **args) {
         "curl --silent --location 'https://api.perplexity.ai/chat/completions' "
         "--header 'accept: application/json' "
         "--header 'content-type: application/json' "
-        "--header 'Authorization: Bearer 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' "
-        "--data-binary '@/tmp/saukobot.json' | jq -r '.choices[0].message.content'"
+        "--header 'Authorization: Bearer %s' "
+        "--data-binary '@/tmp/saukobot.json' | jq -r '.choices[0].message.content'",
+        API_KEY
     );
 
     FILE *fp = popen(curl_cmd, "r");
