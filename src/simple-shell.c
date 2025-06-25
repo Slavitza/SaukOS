@@ -462,13 +462,79 @@ int simple_shell_sauko(char **args) {
 
 
 /**
-* Función para ejecutar aplicaciones bajo el comando sauko
+ * Ejecuta el comando saukobot [prompt] usando la API de Perplexity.
  * @param args: [saukobot, prompt, ...]
  * @return 1 si se ejecutó correctamente
  */
-int simple_shell_sauko(char **args) {
+int simple_shell_saukobot(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "Uso: saukobot <prompt>\n");
+        return 1;
+    }
 
+    // Construir el prompt a partir de los argumentos
+    char prompt[1024] = "";
+    for (int i = 1; args[i] != NULL; i++) {
+        strcat(prompt, args[i]);
+        if (args[i+1] != NULL) strcat(prompt, " ");
+    }
+
+    // Construir el JSON correctamente SIN escapar manualmente las comillas
+    char json_data[2048];
+    snprintf(
+        json_data, sizeof(json_data),
+        "{"
+            "\"model\": \"sonar-pro\","
+            "\"messages\": ["
+                "{\"role\": \"system\", \"content\": \"Responde de forma clara y precisa.\"},"
+                "{\"role\": \"user\", \"content\": \"%s\"}"
+            "]"
+        "}", prompt
+    );
+
+    // Construir el comando curl usando el JSON como archivo temporal para evitar problemas de escape
+    FILE *tmp = fopen("/tmp/saukobot.json", "w");
+    if (!tmp) {
+        fprintf(stderr, "No se pudo crear archivo temporal\n");
+        return 1;
+    }
+    fputs(json_data, tmp);
+    fclose(tmp);
+
+    char curl_cmd[4096];
+    snprintf(
+        curl_cmd, sizeof(curl_cmd),
+        "curl --silent --location 'https://api.perplexity.ai/chat/completions' "
+        "--header 'accept: application/json' "
+        "--header 'content-type: application/json' "
+        "--header 'Authorization: Bearer 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' "
+        "--data-binary '@/tmp/saukobot.json' | jq -r '.choices[0].message.content'"
+    );
+
+    FILE *fp = popen(curl_cmd, "r");
+    if (fp == NULL) {
+        fprintf(stderr, "Error al ejecutar curl\n");
+        return 1;
+    }
+
+    char result[4096];
+    int printed = 0;
+    while (fgets(result, sizeof(result), fp) != NULL) {
+        if (strcmp(result, "null\n") != 0) { // No imprimir null
+            printf("%s", result);
+            printed = 1;
+        }
+    }
+    pclose(fp);
+
+    if (!printed) {
+        printf("No se obtuvo respuesta válida de la API.\n");
+    }
+
+    remove("/tmp/saukobot.json");
+    return 1;
 }
+
 
 
 //-----------------------------------------------------------------------------------------
