@@ -34,7 +34,7 @@
 
 // ############################## GLOBAL VARIABLES SECTION ##############################
 int running = 1;
-char API_KEY[] = ""; // Perplexity API key
+char API_KEY[] = "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"; // Perplexity API key
 // ######################################################################################
 
 
